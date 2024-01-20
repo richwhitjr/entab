@@ -94,49 +94,54 @@ fn get_metadata(header: &[u8], has_signal: bool) -> Result<ChemstationMetadata, 
     let start_time = f64::from(i32::extract(&header[282..], &Endian::Big)?) / 60000.;
     let end_time = f64::from(i32::extract(&header[286..], &Endian::Big)?) / 60000.;
 
+    // disabled the length checks: it does happen that very long names cause the length byte
+    // to fail the check. however, it appears that Chemstation just overwrites when that happens;
+    // each field appears to always start in the right place; if we use these, easy to clean after
+
     let mut offset_correction = 0.;
     let mut mult_correction = 1.;
     let mut signal_name = "";
     if has_signal {
+        // this doesn't appear to work - lots of trailing zeros
         offset_correction = f64::extract(&header[636..], &Endian::Big)?;
         mult_correction = f64::extract(&header[644..], &Endian::Big)?;
 
         let signal_name_len = usize::from(header[596]);
-        if signal_name_len > 40 {
-            return Err("Invalid signal name length".into());
-        }
-        signal_name = str::from_utf8(&header[597..597 + signal_name_len])?.trim();
+        // if signal_name_len > 40 {
+        //     return Err("Invalid signal name length".into());
+        // }
+        signal_name = str::from_utf8(&header[597..636])?.trim();
     }
 
     let sample_len = usize::from(header[24]);
-    if sample_len > 60 {
-        return Err("Invalid sample length".into());
-    }
-    let sample = str::from_utf8(&header[25..25 + sample_len])?
+    // if sample_len > 60 {
+    //     return Err("Invalid sample length".into());
+    // }
+    let sample = str::from_utf8(&header[25..86])?
         .trim()
         .to_string();
     let description_len = usize::from(header[86]);
-    if description_len > 60 {
-        return Err("Invalid sample length".into());
-    }
-    let description = str::from_utf8(&header[87..87 + description_len])?
+    // if description_len > 60 {
+    //     return Err("Invalid description length".into());
+    // }
+    let description = str::from_utf8(&header[87..148])?
         .trim()
         .to_string();
     let operator_len = usize::from(header[148]);
-    if operator_len > 28 {
-        return Err("Invalid sample length".into());
-    }
-    let operator = str::from_utf8(&header[149..149 + operator_len])?
+    // if operator_len > 28 {
+    //     return Err("Invalid operator length".into());
+    // }
+    let operator = str::from_utf8(&header[149..178])?
         .trim()
         .to_string();
     let run_date_len = usize::from(header[178]);
-    if run_date_len > 60 {
-        return Err("Invalid sample length".into());
-    }
+    // if run_date_len > 60 {
+    //     return Err("Invalid run date length".into());
+    // }
     // We need to detect the date format before we can convert into a
     // NaiveDateTime; not sure the format even maps to the file type
     // (it may be computer-dependent?)
-    let raw_run_date = str::from_utf8(&header[179..179 + run_date_len])?.trim();
+    let raw_run_date = str::from_utf8(&header[179..208])?.trim();
     let run_date = if let Ok(d) = NaiveDateTime::parse_from_str(raw_run_date, "%d-%b-%y, %H:%M:%S")
     {
         // format in MWD
@@ -155,11 +160,11 @@ fn get_metadata(header: &[u8], has_signal: bool) -> Result<ChemstationMetadata, 
     };
 
     let instrument_len = usize::from(header[208]);
-    let instrument = str::from_utf8(&header[209..209 + instrument_len])?
+    let instrument = str::from_utf8(&header[209..228])?
         .trim()
         .to_string();
     let method_len = usize::from(header[228]);
-    let method = str::from_utf8(&header[229..229 + method_len])?
+    let method = str::from_utf8(&header[229..252])?
         .trim()
         .to_string();
 
