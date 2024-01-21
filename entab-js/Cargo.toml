@@ -4,7 +4,7 @@ version = "0.3.1"
 authors = ["Roderick <rbovee@gmail.com>"]
 license = "MIT"
 description = "Record-format file reader"
-repository = "https://github.com/bovee/entab"
+repository = "https://github.com/murphy-osmo/entab"
 edition = "2018"
 
 [lib]

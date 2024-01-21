@@ -4,7 +4,7 @@ What is everything were a/could be turned into a table?
 Entab is a parsing framework to turn a variety of record-based scientific file
 formats into usable tabular data across a variety of programming languages.
 
-![Test status](https://github.com/bovee/entab/workflows/Tests/badge.svg)
+![Test status](https://github.com/murphy-osmo/entab/workflows/Tests/badge.svg)
 [![codecov](https://codecov.io/gh/bovee/entab/branch/master/graph/badge.svg?token=106EC5R6M5)](https://codecov.io/gh/bovee/entab)
 [![Package on Crates.io](https://img.shields.io/crates/v/entab.svg)](https://crates.io/crates/entab)
 [![Package on NPM](https://img.shields.io/npm/v/entab.svg)](https://www.npmjs.com/package/entab)
